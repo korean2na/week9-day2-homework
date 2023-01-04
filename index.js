@@ -1,10 +1,22 @@
 const express = require('express')
+const dotenv = require('dotenv')
+const { graphqlHTTP } = require('express-graphql')
+const { connectDB } = require('./src/db')
+const schema = require('./src/graphql/schema')
+
+dotenv.config()
 
 const app = express()
-const port = 1337
+
+connectDB()
 
 app.set('view engine', 'ejs')
-app.set('views', './templates/views')
+app.set('views', './src/templates/views')
+
+app.use('/graphql', graphqlHTTP({
+    schema,
+    graphiql: true
+}))
 
 app.get('/', (req, res) => {
     res.render('home')
@@ -22,6 +34,6 @@ app.get('/user', (req, res) => {
     res.render('user')
 })
 
-app.listen(port, () => {
-    console.log(`Express server listening on port ${port}.`)
+app.listen(process.env.PORT, () => {
+    console.log(`Express server listening on port ${process.env.PORT}.`)
 })
